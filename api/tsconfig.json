@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "*": ["types/*"]
+    },
+    "target": "es2017",                                      // Update target to ES2017 for better compatibility
+    "module": "commonjs",                                     // Keep module as commonjs for Node.js environment
+    "outDir": "./dist",                                       // Output directory for compiled files
+    "strict": true,                                           // Enable strict type checking
+    "esModuleInterop": true,                                   // Enable interoperability between CommonJS and ES Module systems
+    "forceConsistentCasingInFileNames": true,                 // Enforce consistent casing in file names
+    "skipLibCheck": true,                                     // Skip type checking external libraries
+    "resolveJsonModule": true,                                 // Enable default import syntax for CommonJS modules
+    "sourceMap": true,                                        // Generate source maps for easier debugging
+    "declaration": true,                                      // Generate declaration files for TypeScript (.d.ts)
+    "removeComments": true,                                   // Remove comments from output files
+    "noEmitOnError": true,                                    // Do not emit outputs if there are any errors
+    "strictNullChecks": true,                                 // Enable strict null checks
+    "strictPropertyInitialization": true,                     // Ensure all class properties are initialized in the constructor
+    "noImplicitAny": false                                    // Disable implicit any type
+  },
+  "include": [
+    "src/**/*.ts",
+    "types/types.d.ts"
+  ],
+  "exclude": [
+    "node_modules"                                           // Exclude node_modules from compilation
+  ]
+}

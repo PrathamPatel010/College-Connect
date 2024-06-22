@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  username   String    @unique
+  email      String    @unique
+  password   String
+  pic        String?   @default("https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg")
+  isVerified Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  messages   Message[] // A user can send multiple messages
+  chats      Chat[]    @relation("UserChats") // A user can participate in multiple chats
+  groupAdmin Chat[]    @relation("GroupAdmin") // A user can be a group admin for multiple chats
+
+  @@map("users")
+}
+
+model Chat {
+  id            Int       @id @default(autoincrement())
+  chatName      String?   @default("sender")
+  isGroupChat   Boolean   @default(false)
+  groupAdminId  Int?
+  groupAdmin    User?     @relation("GroupAdmin", fields: [groupAdminId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  users         User[]    @relation("UserChats") // Chat can have multiple users
+  messages      Message[] // A chat can have multiple messages
+  latestMessage Int? // latest message in P2P Chat or Group Chat
+
+  @@map("chats")
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  readBy    Int[]    @default([]) // IDs of users who have read the message
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  chatId    Int
+  chat      Chat     @relation(fields: [chatId], references: [id])
+
+  @@map("messages")
+}
