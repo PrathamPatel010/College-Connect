@@ -20,7 +20,7 @@ async function signUp(req: Request, res: Response,next:NextFunction) {
 async function signIn(req: Request, res: Response,next:NextFunction) {
     try {
         const response = await authService.signInUser(req.body);
-        return res.status(201).json({
+        return res.status(200).json({
             message: 'User Signed-in successfully',
             success: true,
             data: response,
