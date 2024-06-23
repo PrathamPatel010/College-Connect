@@ -45,4 +45,46 @@ async function getAll(req: AuthenticatedRequest, res: Response, next: NextFuncti
         next(error);
     }
 }
-export default { createP2P,createGroup,getAll};
+
+async function update(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+        const response = await chatService.updateGroupChat(req.body,req?.user?.id);
+        return res.status(200).json({
+            message: `Group Chat updated successfully`,
+            success: true,
+            data: response,
+            error: {}
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function addToGroup(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+        const response = await chatService.addToGroupChat(req.body,req?.user?.id);
+        return res.status(200).json({
+            message: `User added to group chat successfully`,
+            success: true,
+            data: response,
+            error: {}
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function removeFromGroup(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+        const response = await chatService.removeFromGroup(req.body,req?.user?.id);
+        return res.status(200).json({
+            message: `User removed from group chat successfully`,
+            success: true,
+            data: response,
+            error: {}
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+export default { createP2P,createGroup,getAll,update,addToGroup,removeFromGroup};

@@ -11,3 +11,15 @@ export type CreateGroupChatDto = {
     users: number[],
     loggedInUser:LoggedInUserDto|undefined,
 }
+
+export type UpdateGroupChatDto = {
+    chatId:number,
+    newChatName:string,
+    loggedInUserId?:number,
+}
+
+export type AddOrRemoveInGroupChatDto = {
+    chatId:number,
+    userId:number,
+    loggedInUserId:number|undefined
+}

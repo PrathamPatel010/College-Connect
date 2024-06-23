@@ -36,6 +36,39 @@ class UserService {
             throw error;
         }
     }
+
+    async updateGroupChat(data:{chatId:number,newChatName:string},loggedInUserId:number|undefined) {
+        try {
+            const {chatId,newChatName} = data;
+            const response = await chatRepo.updateChat({chatId,newChatName,loggedInUserId});
+            return response;
+        } catch (error) {
+            console.log(`Error occurred at chat service layer ${(error as Error)}`.red);
+            throw error;
+        }
+    }
+
+    async addToGroupChat(data:{chatId:number,userId:number},loggedInUserId:number|undefined) {
+        try {
+            const {chatId,userId} = data;
+            const response = await chatRepo.addToGroup({chatId,userId,loggedInUserId});
+            return response;
+        } catch (error) {
+            console.log(`Error occurred at chat service layer ${(error as Error)}`.red);
+            throw error;
+        }
+    }
+
+    async removeFromGroup(data:{chatId:number,userId:number},loggedInUserId:number|undefined) {
+        try {
+            const {chatId,userId} = data;
+            const response = await chatRepo.removeFromGroup({chatId,userId,loggedInUserId});
+            return response;
+        } catch (error) {
+            console.log(`Error occurred at chat service layer ${(error as Error)}`.red);
+            throw error;
+        }
+    }
 }
 
 export default UserService;

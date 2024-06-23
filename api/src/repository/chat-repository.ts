@@ -1,5 +1,10 @@
 import prismaService from "../config/dbConfig";
-import {CreateGroupChatDto, CreateOrAccessChatDto} from "../dto/chat-dto";
+import {
+    AddOrRemoveInGroupChatDto,
+    CreateGroupChatDto,
+    CreateOrAccessChatDto,
+    UpdateGroupChatDto
+} from "../dto/chat-dto";
 import {BadRequestError} from "../utils/error-handler/AppError";
 
 class ChatRepository{
@@ -104,6 +109,123 @@ class ChatRepository{
                 }
             });
             return chats;
+        } catch (error) {
+            console.log("Error occurred at chat repository layer ", (error as Error).message);
+            throw error;
+        }
+    }
+
+    async updateChat(data:UpdateGroupChatDto){
+        try {
+            console.log(data);
+            const chat = await prismaService.chat.findFirst({
+                where:{
+                    AND:[
+                        {id:data.chatId},
+                        {groupAdminId:data.loggedInUserId}
+                    ]
+                }
+            })
+            if (!chat){
+                throw new Error("Chat not found OR you are not the group admin");
+            }
+
+            const updatedGroupChat = await prismaService.chat.update({
+                where:{
+                    id:data.chatId
+                },
+                data:{
+                    chatName:data.newChatName
+                },
+                include:{
+                    users:{
+                        select:{
+                            id:true,username:true,email:true,pic:true,isVerified:true
+                        }
+                    }
+                }
+            });
+            return updatedGroupChat;
+        } catch (error) {
+            console.log("Error occurred at chat repository layer ", (error as Error).message);
+            throw error;
+        }
+    }
+
+    async addToGroup(data:AddOrRemoveInGroupChatDto){
+        try {
+            const chat = await prismaService.chat.findFirst({
+                where:{
+                    AND:[
+                        {isGroupChat:true},
+                        {id:data.chatId},
+                        {groupAdminId:data.loggedInUserId}
+                    ]
+                }
+            });
+
+            if (!chat){
+                throw new Error("Group chat does not exist OR you are not the admin");
+            }
+
+            const updatedChat = await prismaService.chat.update({
+                where:{
+                    id:chat?.id
+                },
+                data:{
+                    users:{
+                        connect:{id:data.userId}
+                    }
+                },
+                include:{
+                    users:{
+                        select:{
+                            id:true,username:true,email:true,pic:true,isVerified:true
+                        }
+                    }
+                }
+            });
+            return updatedChat;
+        } catch (error) {
+            console.log("Error occurred at chat repository layer ", (error as Error).message);
+            throw error;
+        }
+    }
+
+    async removeFromGroup(data:AddOrRemoveInGroupChatDto){
+        try {
+            const chat = await prismaService.chat.findFirst({
+                where:{
+                    AND:[
+                        {isGroupChat:true},
+                        {id:data.chatId},
+                        {groupAdminId:data.loggedInUserId}
+                    ]
+                }
+            });
+
+            if (!chat){
+                throw new Error("Group chat does not exist OR you are not the admin");
+            }
+
+            const updatedChat = await prismaService.chat.update({
+                where:{
+                    id:chat?.id
+                },
+                data:{
+                    users:{
+                        disconnect:{id:data.userId}
+                    }
+                },
+                include:{
+                    users:{
+                        select:{
+                            id:true,username:true,email:true,pic:true,isVerified:true
+                        }
+                    }
+                }
+            });
+            return updatedChat;
         } catch (error) {
             console.log("Error occurred at chat repository layer ", (error as Error).message);
             throw error;
