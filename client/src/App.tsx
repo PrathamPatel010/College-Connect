@@ -1,11 +1,11 @@
-import { Button } from "./components/ui/button"
+import RegisterForm from "./components/RegisterForm";
 
 function App() {
   return (
     <>
-      <Button>My Button</Button>
+      <RegisterForm />
     </>
   )
 }
 
-export default App
+export default App;
