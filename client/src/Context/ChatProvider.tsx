@@ -1,0 +1,37 @@
+import { useState, createContext, ReactNode, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+
+const ChatContext = createContext({});
+
+interface Props {
+    children: ReactNode
+}
+
+const ChatProvider = ({ children }: Props) => {
+    const [user, setUser] = useState();
+    const navigate = useNavigate();
+    const path = window.location.pathname;
+    useEffect(() => {
+        const userInfoString = localStorage.getItem('info');
+        if (userInfoString) {
+            const userInfo = JSON.parse(userInfoString);
+            setUser(userInfo);
+            return;
+        }
+        if (path !== '/signup' && path !== '/')
+            navigate('/');
+
+    }, [navigate, path]);
+
+    return (
+        <ChatContext.Provider value={{ user, setUser }}>
+            {children}
+        </ChatContext.Provider>
+    )
+}
+
+export const ChatState = () => {
+    return useContext(ChatContext);
+}
+
+export default ChatProvider;
