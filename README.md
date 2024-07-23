@@ -29,7 +29,7 @@ Note: [V2] - Denotes that these features are for future enhancement.
 - **Storage:** Initial setup to handle data for up to 10,000 users with scope for expansion.
 - **Traffic:** System designed to handle up to 1000 concurrent users initially with the ability to scale.
 
-### Choosing Database:**
+### Choosing Database:
 Based on our requirements for complex relationships, scalability, and support for ACID transactions, We can use PostgresSQL.
 PostgreSQL's strong support for relational data structures and its capability for horizontal scalability through clustering and partitioning make it ideal for our application.
 
@@ -40,3 +40,5 @@ PostgreSQL's strong support for relational data structures and its capability fo
 - **Frontend:** React Typescript
 - **Styling:** Tailwind CSS, shadcn/ui
 
+### High-Level Design Diagram
+<img src="./Design_Diagram_MK2.png" alt="high-level-design-image">
