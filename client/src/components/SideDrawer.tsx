@@ -14,7 +14,7 @@ import {
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-import { ChatState } from "../Context/ChatProvider";
+import { ChatState, User } from "../Context/ChatProvider";
 import {
     Dialog,
     DialogClose,
@@ -22,12 +22,28 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "./ui/dialog";
+
+import {
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTrigger,
+} from "./ui/drawer";
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Input } from "./ui/input";
+import { apiClient } from "../services/apiClient";
+import UserListItem from "./User/UserListItem";
+
 
 
 const SideDrawer = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [search, setSearch] = useState('');
+    const [searchResult, setSearchResult] = useState<User[]>([]);
     const userData = ChatState();
     const user = userData?.user;
     const navigate = useNavigate();
@@ -37,13 +53,25 @@ const SideDrawer = () => {
         navigate('/');
     }
 
+    async function handleSearch() {
+        if (search === '')
+            return;
+        const config = {
+            headers: {
+                Authorization: `Bearer ${user?.token}`
+            }
+        }
+        const { data } = await apiClient.get(`/users?username=${search}`, config);
+        setSearchResult(data.data);
+    }
+
     return (
         <main className="px-2">
             <div className="flex justify-between items-center border-1">
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger>
-                            <Button className="bg-gray-300" color="primary px-4">
+                            <Button onClick={() => setIsDrawerOpen(true)} className="bg-gray-300" color="primary px-4">
                                 <i className="fas fa-search"></i>
                                 <span className="px-2 hidden md:block">Search Users</span>
                             </Button>
@@ -92,6 +120,35 @@ const SideDrawer = () => {
                             </div>
                         </DialogContent>
                     </Dialog>
+                    <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                        <DrawerTrigger asChild>
+                            <Button className="hidden" variant="outline">Open Drawer</Button>
+                        </DrawerTrigger>
+                        <DrawerContent className="fixed h-full left-0 w-64 max-w-full">
+                            <div className="mx-auto w-full h-full flex flex-col">
+                                <DrawerHeader className="p-4 flex justify-center items-center">
+                                    <div className="">
+                                        <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search for a user" />
+                                    </div>
+                                    <div>
+                                        <DrawerClose>
+                                            <i className="text-4xl fa-solid fa-rectangle-xmark cursor-pointer"></i>
+                                        </DrawerClose>
+                                    </div>
+                                </DrawerHeader>
+                                <div className="text-center">
+                                    <Button onClick={handleSearch} variant="outline">Search</Button>
+                                </div>
+                                <div className="flex flex-col overflow-y-auto">
+                                    {searchResult.map((user) => {
+                                        return (
+                                            <UserListItem key={user.id} user={user} />
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        </DrawerContent>
+                    </Drawer>
                 </div>
             </div>
         </main >
