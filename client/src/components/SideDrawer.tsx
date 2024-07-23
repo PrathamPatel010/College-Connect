@@ -23,12 +23,19 @@ import {
     DialogTrigger,
 } from "./ui/dialog";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 const SideDrawer = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const userData = ChatState();
     const user = userData?.user;
+    const navigate = useNavigate();
+
+    function logout() {
+        localStorage.removeItem('info');
+        navigate('/');
+    }
 
     return (
         <main className="px-2">
@@ -65,7 +72,7 @@ const SideDrawer = () => {
                                     Manage Profile
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem className="cursor-pointer">Logout</DropdownMenuItem>
+                                <DropdownMenuItem onClick={logout} className="cursor-pointer">Logout</DropdownMenuItem>
                             </Dialog>
                         </DropdownMenuContent>
                     </DropdownMenu>
