@@ -15,12 +15,20 @@ import {
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { ChatState } from "../Context/ChatProvider";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogTitle,
+    DialogTrigger,
+} from "./ui/dialog";
+import { useState } from "react";
 
 
 const SideDrawer = () => {
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const userData = ChatState();
     const user = userData?.user;
-
 
     return (
         <main className="px-2">
@@ -52,14 +60,34 @@ const SideDrawer = () => {
                             <i className="fa-solid fa-arrow-down text-4xl"></i>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                            <DropdownMenuItem className="cursor-pointer">Manage Profile</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="cursor-pointer">Logout</DropdownMenuItem>
+                            <Dialog>
+                                <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
+                                    Manage Profile
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className="cursor-pointer">Logout</DropdownMenuItem>
+                            </Dialog>
                         </DropdownMenuContent>
                     </DropdownMenu>
+
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogTrigger asChild>
+                            <button className="hidden">Open Dialog</button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                            <DialogTitle className="text-center">User Profile</DialogTitle>
+                            <div className="flex flex-col items-center space-y-4">
+                                <img className="rounded-full w-20 h-20" src={user?.pic} alt="Profile" />
+                                <div>Email - {user?.email}</div>
+                                <DialogClose asChild>
+                                    <button className="btn">Close</button>
+                                </DialogClose>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </div>
-        </main>
+        </main >
     )
 }
 
