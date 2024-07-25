@@ -44,8 +44,12 @@ const SideDrawer = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [search, setSearch] = useState('');
     const [searchResult, setSearchResult] = useState<User[]>([]);
-    const userData = ChatState();
-    const user = userData?.user;
+    const {
+        user,
+        setSelectedChat,
+        chats,
+        setChats,
+    } = ChatState();
     const navigate = useNavigate();
 
     function logout() {
@@ -65,6 +69,23 @@ const SideDrawer = () => {
         setSearchResult(data.data);
     }
 
+
+    async function accessChat(userId: number) {
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user?.token}`
+                }
+            }
+            const { data } = await apiClient.post(`/chats/`, { userId }, config);
+            const chatData = data.data;
+            if (chats.find(c => c.id === chatData.id))
+                setChats([...chats, chatData]);
+            setSelectedChat(data.data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
     return (
         <main className="px-2">
             <div className="flex justify-between items-center border-1">
@@ -142,7 +163,7 @@ const SideDrawer = () => {
                                 <div className="flex flex-col overflow-y-auto">
                                     {searchResult.map((user) => {
                                         return (
-                                            <UserListItem key={user.id} user={user} />
+                                            <UserListItem onClick={() => accessChat(user.id)} key={user.id} user={user} />
                                         )
                                     })}
                                 </div>
