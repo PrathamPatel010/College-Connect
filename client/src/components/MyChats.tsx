@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
-import { ChatState, User } from "../Context/ChatProvider";
+import { ChatState } from "../Context/ChatProvider";
 import { Button } from "./ui/button";
 import ModalNewGroupChat from "./Modal/NewGroupChat";
 import { fetchChats } from "../services/chatService";
+import { getReceiver } from "../utils/chatUtils";
 
 const MyChats = () => {
     const [loggedInUser, setLoggedInUser] = useState();
     const [dialogOpen, setDialogOpen] = useState(false);
     const { user, chats, setChats, selectedChat, setSelectedChat } = ChatState();
-
-    function getSender(loggedInUser: User | undefined, users: User[]) {
-        return users[0]?.id === loggedInUser?.id ? users[1].username : users[0].username;
-    }
 
     useEffect(() => {
         const userInfoString = localStorage.getItem('info');
@@ -42,7 +39,7 @@ const MyChats = () => {
                             className={`${selectedChat === chat ? 'bg-black text-white' : 'bg-white text-black'} flex cursor-pointer p-3 rounded-lg mt-4`}
                             key={chat.id}
                         >
-                            <span>{!chat.isGroupChat ? getSender(loggedInUser, chat.users) : chat.chatName}</span>
+                            <span>{!chat.isGroupChat ? getReceiver(loggedInUser, chat.users) : chat.chatName}</span>
                         </div>
                     ))}
                 </div>

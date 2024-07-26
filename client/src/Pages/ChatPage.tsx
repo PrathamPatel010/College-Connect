@@ -1,4 +1,4 @@
-import ChatBox from "../components/ChatBox";
+import ChatBox from "../components/Chat/ChatBox";
 import MyChats from "../components/MyChats";
 import SideDrawer from "../components/SideDrawer";
 import { ChatState } from "../Context/ChatProvider";
@@ -9,7 +9,7 @@ const ChatPage = () => {
     return (
         <main>
             <SideDrawer />
-            <section className="flex flex-col md:flex-row mt-3">
+            <section className="flex flex-col space-x-2 md:flex-row mt-3">
                 <div className={`w-full ${selectedChat ? 'hidden' : 'block'} md:block md:w-2/6`}>
                     <MyChats />
                 </div>
