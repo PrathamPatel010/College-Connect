@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { ChatState, User } from "../Context/ChatProvider";
-import { apiClient } from "../services/apiClient";
 import { Button } from "./ui/button";
+import ModalNewGroupChat from "./Modal/NewGroupChat";
+import { fetchChats } from "../services/chatService";
 
 const MyChats = () => {
     const [loggedInUser, setLoggedInUser] = useState();
+    const [dialogOpen, setDialogOpen] = useState(false);
     const { user, chats, setChats, selectedChat, setSelectedChat } = ChatState();
 
     function getSender(loggedInUser: User | undefined, users: User[]) {
@@ -17,22 +19,9 @@ const MyChats = () => {
             setLoggedInUser(JSON.parse(userInfoString));
         }
 
-        const fetchChats = async () => {
-            if (!user?.token) return; // Ensure user token is available
-            try {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${user?.token}`,
-                    },
-                };
-                const { data } = await apiClient.get("/chats", config);
-                setChats(data.data);
-            } catch (err) {
-                console.log(err);
-            }
-        };
-
-        fetchChats();
+        if (user?.token) {
+            fetchChats(user.token, setChats);
+        }
     }, [setChats, user?.token]);
 
     return (
@@ -40,10 +29,11 @@ const MyChats = () => {
             <div className={`w-full ${selectedChat ? 'hidden md:flex' : 'flex'} flex-col bg-gray-500 h-full md:w-full content-center rounded-md`}>
                 <div className="flex justify-between items-center p-1">
                     <span>My Chats</span>
-                    <Button className="flex justify-between items-center px-2">
+                    <Button onClick={() => setDialogOpen(true)} className="flex justify-between space-x-2 items-center px-2">
                         <span>New Group Chat</span>
                         <i className="fa-solid fa-plus text-xl"></i>
                     </Button>
+                    <ModalNewGroupChat setDialogOpen={setDialogOpen} dialogOpen={dialogOpen} />
                 </div>
                 <div className="flex flex-col p-3 rounded-lg overflow-y-auto">
                     {chats.map((chat) => (

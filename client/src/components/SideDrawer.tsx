@@ -36,6 +36,7 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "./ui/input";
 import { apiClient } from "../services/apiClient";
 import UserListItem from "./User/UserListItem";
+import { fetchChats } from "../services/chatService";
 
 
 
@@ -81,7 +82,8 @@ const SideDrawer = () => {
             const chatData = data.data;
             if (chats.find(c => c.id === chatData.id))
                 setChats([...chats, chatData]);
-            setSelectedChat(data.data);
+            setSelectedChat(chatData);
+            fetchChats(user?.token, setChats);
         } catch (err) {
             console.log(err);
         }
