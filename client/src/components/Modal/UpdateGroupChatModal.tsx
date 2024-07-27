@@ -9,6 +9,7 @@ import { loggedInUser } from '../../services/chatService';
 import UserListItem from '../User/UserListItem';
 import { toast } from '../ui/use-toast';
 import axios from 'axios';
+import { cn } from '../../lib/utils';
 
 interface Props {
     isUpdateGcOpen: boolean,
@@ -50,6 +51,9 @@ const UpdateGroupChatModal = ({ selectedChat, isUpdateGcOpen, setIsUpdateGcOpen,
             if (user.id === loggedInUser.id) {
                 toast({
                     title: "Cannot remove yourself as you are admin",
+                    className: cn(
+                        'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                    ),
                     status: "error",
                     variant: 'destructive',
                 })
@@ -65,6 +69,9 @@ const UpdateGroupChatModal = ({ selectedChat, isUpdateGcOpen, setIsUpdateGcOpen,
             setUsers(prevUsers => prevUsers.filter(u => u.id !== user.id));
             toast({
                 title: data.success ? "User removed from group successfully!" : "Uh oh! Something went wrong.",
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
                 description: data.success ? "" : data.message,
                 status: data.success ? 'success' : 'error'
             });
@@ -72,6 +79,9 @@ const UpdateGroupChatModal = ({ selectedChat, isUpdateGcOpen, setIsUpdateGcOpen,
             console.log(err);
             toast({
                 title: "Removing user from group failed",
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
                 description: (axios.isAxiosError(err) && err.response?.data?.message) || "An unexpected error occurred. Please try again.",
                 status: "error",
                 variant: 'destructive',
@@ -96,13 +106,20 @@ const UpdateGroupChatModal = ({ selectedChat, isUpdateGcOpen, setIsUpdateGcOpen,
             setSelectedChat({ ...selectedChat, chatName: updatedChatData.chatName });
             toast({
                 title: data.success ? "Group chat renamed successfully!" : "Uh oh! Something went wrong.",
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
                 description: data.success ? "" : data.message,
                 status: data.success ? 'success' : 'error'
             });
+            setIsUpdateGcOpen(false);
         } catch (err) {
             console.log(err);
             toast({
                 title: "Renaming group chat failed",
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
                 description: (axios.isAxiosError(err) && err.response?.data?.message) || "An unexpected error occurred. Please try again.",
                 status: "error",
                 variant: 'destructive',
@@ -124,6 +141,9 @@ const UpdateGroupChatModal = ({ selectedChat, isUpdateGcOpen, setIsUpdateGcOpen,
             setSelectedChat({ ...selectedChat, users: [...users, user] });
             toast({
                 title: data.success ? "User added to group successfully!" : "Uh oh! Something went wrong.",
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
                 description: data.success ? "" : data.message,
                 status: data.success ? 'success' : 'error'
             });
@@ -131,6 +151,9 @@ const UpdateGroupChatModal = ({ selectedChat, isUpdateGcOpen, setIsUpdateGcOpen,
             console.log(err);
             toast({
                 title: "Adding user to group chat failed",
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
                 description: (axios.isAxiosError(err) && err.response?.data?.message) || "An unexpected error occurred. Please try again.",
                 status: "error",
                 variant: 'destructive',

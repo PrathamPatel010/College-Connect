@@ -26,7 +26,7 @@ const ChatHeader = ({ selectedChat, setSelectedChat }: Props) => {
                     <img className='w-12 h-12 rounded-full object-cover' src={receiverInfo.pic} alt={`${receiver} Profile`} />
                     <span className='text-4xl'>{receiver}</span>
                 </div>
-                {selectedChat.isGroupChat && selectedChat.groupAdminId === loggedInUser.id && (
+                {selectedChat.isGroupChat && (selectedChat.groupAdminId === loggedInUser.id) && (
                     <i onClick={() => setIsUpdateGcOpen(true)} className="fa-solid fa-pencil text-4xl cursor-pointer text-black rounded-full hover:bg-white p-3"></i>
                 )}
                 <UpdateGroupChatModal selectedChat={selectedChat} isUpdateGcOpen={isUpdateGcOpen} setIsUpdateGcOpen={setIsUpdateGcOpen} setSelectedChat={setSelectedChat} />

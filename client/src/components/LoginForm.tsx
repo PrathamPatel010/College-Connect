@@ -18,6 +18,7 @@ import Heading from "./ui/Heading";
 import { toast } from "./ui/use-toast";
 import axios from "axios";
 import { Toaster } from "./ui/toaster";
+import { cn } from "../lib/utils";
 
 const LoginForm = () => {
     const navigate = useNavigate();
@@ -43,6 +44,9 @@ const LoginForm = () => {
             const { data } = await apiClient.post('/auth/signin', values);
             await localStorage.setItem('info', JSON.stringify(data.data));
             toast({
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
                 title: data.success ? "User Signed-In successfully!" : "Uh oh! Something went wrong.",
                 description: data.success ? "Please Wait..." : data.message,
                 status: data.success ? 'success' : 'error'
@@ -52,6 +56,9 @@ const LoginForm = () => {
             }, 1000);
         } catch (err) {
             toast({
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
                 title: "Login Failed",
                 description: (axios.isAxiosError(err) && err.response?.data?.message) || "An unexpected error occurred. Please try again.",
                 status: "error",

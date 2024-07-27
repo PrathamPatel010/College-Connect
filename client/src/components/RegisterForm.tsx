@@ -21,6 +21,7 @@ import { useState } from "react";
 import { Toaster } from './ui/toaster';
 import { apiClient } from '../services/apiClient';
 import { CLOUD_NAME, CLOUDINARY_URL, UPLOAD_PRESET } from '../config/serverConfig';
+import { cn } from '../lib/utils';
 
 const FormSchema = z.object({
     email: z.string().email(),
@@ -65,12 +66,18 @@ function RegisterForm() {
             const response = await apiClient.post('/auth/signup', formData);
             toast({
                 title: response.data.success ? "User registered successfully!" : "Uh oh! Something went wrong.",
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
                 description: response.data.success ? "Check your email to verify account" : response.data.message,
                 status: response.data.success ? 'success' : 'error'
             });
         } catch (err) {
             toast({
                 title: "Registration Failed",
+                className: cn(
+                    'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                ),
                 description: (axios.isAxiosError(err) && err.response?.data?.message) || "An unexpected error occurred. Please try again.",
                 status: "error",
                 variant: 'destructive',
