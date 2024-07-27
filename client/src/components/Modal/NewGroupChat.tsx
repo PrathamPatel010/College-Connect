@@ -73,6 +73,7 @@ function ModalNewGroupChat({ dialogOpen, setDialogOpen }: Props) {
                 title: data.success ? "Group Chat created successfully" : "Uh oh! Something went wrong.",
                 status: data.success ? 'success' : 'error'
             });
+            setDialogOpen && setDialogOpen(false);
             fetchChats(user?.token, setChats);
         } catch (err) {
             console.log(err);

@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface Props {
     user: User,
-    onClick: () => void,
+    onClick?: () => void,
 }
 const UserListItem = ({ user, onClick }: Props) => {
     return (
