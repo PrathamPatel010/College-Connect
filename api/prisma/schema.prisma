@@ -44,8 +44,8 @@ model Message {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   readBy    Int[]    @default([]) // IDs of users who have read the message
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  senderId  Int
+  sender    User     @relation(fields: [senderId], references: [id])
   chatId    Int
   chat      Chat     @relation(fields: [chatId], references: [id])
 
