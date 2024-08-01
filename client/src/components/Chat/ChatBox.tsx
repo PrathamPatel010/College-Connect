@@ -1,12 +1,74 @@
+import { useEffect, useState } from "react";
 import { ChatState } from "../../Context/ChatProvider";
 import SendButton from "../../utils/sendButton";
 import { Input } from "../ui/input";
 import ChatHeader from "./ChatHeader";
 import ScrollableChat from "./ScrollableChat";
+import { loggedInUser } from "../../services/chatService";
+import { apiClient } from "../../services/apiClient";
+import { Message } from "../../config/types";
 
 const ChatBox = () => {
-    const { selectedChat, setSelectedChat } = ChatState();
+    const { selectedChat, setSelectedChat, user } = ChatState();
+    const [newMessage, setNewMessage] = useState('');
+    const [messages, setMessages] = useState<Message[]>([]);
     const text = "Click on chat to start chatting";
+
+    const config = {
+        headers: {
+            authorization: `Bearer ${user?.token}`
+        }
+    }
+
+    async function fetchMessages() {
+        try {
+            if (!selectedChat) {
+                return;
+            }
+            const chatId = selectedChat && selectedChat.id;
+            const response = await apiClient.get(`/messages/${chatId}`, config);
+            setMessages(response.data.data.messages);
+        } catch (err) {
+            setMessages([]);
+            console.log(err);
+        }
+    }
+
+    useEffect(() => {
+        fetchMessages();
+    }, [selectedChat?.id]);
+
+    async function handleSendMessage() {
+        const sender = loggedInUser;
+        const payload = { content: newMessage, chatId: selectedChat?.id, sender: user?.id };
+
+        // Create optimistic message
+        const latestMessage: Message = {
+            chat: selectedChat || undefined,
+            chatId: selectedChat?.id,
+            content: newMessage,
+            id: Date.now(), // Temporary ID for optimistic rendering
+            sender: sender,
+            senderId: sender.id,
+        };
+        setMessages([...messages, latestMessage]);
+        setNewMessage('');
+        try {
+            const response = await apiClient.post('/messages', payload, config);
+            setMessages(prevMessages =>
+                prevMessages.map(msg =>
+                    msg.id === latestMessage.id ? { ...msg, id: response.data.data.id } : msg
+                )
+            );
+        } catch (err) {
+            console.log(err);
+            setMessages(prevMessages =>
+                prevMessages.filter(msg => msg.id !== latestMessage.id)
+            );
+        }
+    }
+
+
 
     return (
         <div className="h-full flex flex-col">
@@ -18,11 +80,14 @@ const ChatBox = () => {
             {selectedChat && (
                 <ChatHeader selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
             )}
-            {selectedChat && (<ScrollableChat />)}
+            {selectedChat && (<ScrollableChat messages={messages} />)}
             {selectedChat && (
-                <div className="sticky bottom-0 flex w-full items-center space-x-2">
-                    <Input className="rounded-md bg-white text-black" type="text" placeholder="Type a message.." />
-                    <SendButton />
+                <div className="bg-gray-500 sticky bottom-0 flex w-full items-center space-x-2">
+                    <Input onChange={
+                        (e) => setNewMessage(e.target.value)
+                    }
+                        value={newMessage} className="rounded-md bg-white text-black" type="text" placeholder="Type a message.." />
+                    <SendButton onClick={() => handleSendMessage()} />
                 </div>
             )}
         </div>
