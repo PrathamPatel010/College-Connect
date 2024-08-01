@@ -20,7 +20,7 @@ const ChatHeader = ({ selectedChat, setSelectedChat }: Props) => {
 
     return (
         <>
-            <div className='bg-gray-500 rounded-md p-1 flex justify-between items-center'>
+            <div className='fixed-0 top-0 bg-gray-500 rounded-md p-1 flex justify-between items-center'>
                 <div className='flex space-x-3 items-center'>
                     <i onClick={() => setSelectedChat(undefined)} className="fa-solid fa-arrow-left text-4xl text-black rounded-full cursor-pointer hover:bg-white p-3"></i>
                     <img className='w-12 h-12 rounded-full object-cover' src={receiverInfo.pic} alt={`${receiver} Profile`} />
