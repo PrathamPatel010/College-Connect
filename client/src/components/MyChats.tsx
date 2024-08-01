@@ -22,7 +22,7 @@ const MyChats = () => {
     }, [setChats, user?.token]);
 
     return (
-        <main className="h-screen">
+        <main className="h-full">
             <div className={`w-full ${selectedChat ? 'hidden md:flex' : 'flex'} flex-col bg-gray-500 h-full md:w-full content-center rounded-md`}>
                 <div className="flex justify-between items-center p-1">
                     <span>My Chats</span>
@@ -32,7 +32,7 @@ const MyChats = () => {
                     </Button>
                     <ModalNewGroupChat setDialogOpen={setDialogOpen} dialogOpen={dialogOpen} />
                 </div>
-                <div className="flex flex-col p-3 rounded-lg overflow-y-auto">
+                <div className="flex flex-col p-3 rounded-lg overflow-y-auto h-full">
                     {chats.map((chat) => (
                         <div
                             onClick={() => setSelectedChat(chat)}

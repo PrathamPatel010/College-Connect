@@ -36,3 +36,4 @@ const ChatHeader = ({ selectedChat, setSelectedChat }: Props) => {
 }
 
 export default ChatHeader;
+
