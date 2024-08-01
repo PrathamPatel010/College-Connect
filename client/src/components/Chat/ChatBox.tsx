@@ -1,5 +1,8 @@
 import { ChatState } from "../../Context/ChatProvider";
+import SendButton from "../../utils/sendButton";
+import { Input } from "../ui/input";
 import ChatHeader from "./ChatHeader";
+import ScrollableChat from "./ScrollableChat";
 
 const ChatBox = () => {
     const { selectedChat, setSelectedChat } = ChatState();
@@ -15,9 +18,13 @@ const ChatBox = () => {
             {selectedChat && (
                 <ChatHeader selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
             )}
-            <div className="bg-gray-400 flex-1 overflow-y-auto">
-                Your messages content here
-            </div>
+            {selectedChat && (<ScrollableChat />)}
+            {selectedChat && (
+                <div className="sticky bottom-0 flex w-full items-center space-x-2">
+                    <Input className="rounded-md bg-white text-black" type="text" placeholder="Type a message.." />
+                    <SendButton />
+                </div>
+            )}
         </div>
     );
 };
