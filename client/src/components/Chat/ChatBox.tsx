@@ -7,10 +7,14 @@ import ScrollableChat from "./ScrollableChat";
 import { loggedInUser } from "../../services/chatService";
 import { apiClient } from "../../services/apiClient";
 import { Message } from "../../config/types";
+import io, { Socket } from 'socket.io-client';
+const endpoint = 'http://localhost:4000';
+let socket: Socket, selectedChatCompare;
 
 const ChatBox = () => {
     const { selectedChat, setSelectedChat, user } = ChatState();
     const [newMessage, setNewMessage] = useState('');
+    const [socketConnected, setSocketConnected] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const text = "Click on chat to start chatting";
 
@@ -20,6 +24,18 @@ const ChatBox = () => {
         }
     }
 
+    useEffect(() => {
+        socket = io(endpoint);
+        socket.emit('setup', user);
+        socket.on('connected', () => {
+            setSocketConnected(true);
+        });
+    }, [user]);
+
+    useEffect(() => {
+        fetchMessages();
+    }, [selectedChat?.id]);
+
     async function fetchMessages() {
         try {
             if (!selectedChat) {
@@ -28,15 +44,14 @@ const ChatBox = () => {
             const chatId = selectedChat && selectedChat.id;
             const response = await apiClient.get(`/messages/${chatId}`, config);
             setMessages(response.data.data.messages);
+            socket.emit('join chat', selectedChat.id);
         } catch (err) {
             setMessages([]);
             console.log(err);
         }
     }
 
-    useEffect(() => {
-        fetchMessages();
-    }, [selectedChat?.id]);
+
 
     async function handleSendMessage() {
         const sender = loggedInUser;
