@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChatState } from "../../Context/ChatProvider";
+import { Chat, ChatState } from "../../Context/ChatProvider";
 import SendButton from "../../utils/sendButton";
 import { Input } from "../ui/input";
 import ChatHeader from "./ChatHeader";
@@ -8,8 +8,9 @@ import { loggedInUser } from "../../services/chatService";
 import { apiClient } from "../../services/apiClient";
 import { Message } from "../../config/types";
 import io, { Socket } from 'socket.io-client';
-const endpoint = 'http://localhost:4000';
-let socket: Socket, selectedChatCompare;
+
+const endpoint = import.meta.env.VITE_BACKEND_BASE;
+let socket: Socket, selectedChatCompare: Chat | undefined;
 
 const ChatBox = () => {
     const { selectedChat, setSelectedChat, user } = ChatState();
@@ -25,6 +26,7 @@ const ChatBox = () => {
     }
 
     useEffect(() => {
+        console.log(socketConnected);
         socket = io(endpoint);
         socket.emit('setup', user);
         socket.on('connected', () => {
@@ -33,8 +35,27 @@ const ChatBox = () => {
     }, [user]);
 
     useEffect(() => {
-        fetchMessages();
-    }, [selectedChat?.id]);
+        if (selectedChat) {
+            fetchMessages();
+            selectedChatCompare = selectedChat;
+            socket.emit('join chat', selectedChat.id);
+        }
+    }, [selectedChat]);
+
+    useEffect(() => {
+        socket.on('message received', ({ message, chat }) => {
+            if (!selectedChatCompare || (selectedChatCompare.id !== chat.id)) {
+                // show notification
+                return;
+            }
+            setMessages(prevMessages => [...prevMessages, message]);
+        });
+
+        // Cleanup the listener on component unmount
+        return () => {
+            socket.off('message received');
+        };
+    }, [selectedChatCompare]);
 
     async function fetchMessages() {
         try {
@@ -44,20 +65,17 @@ const ChatBox = () => {
             const chatId = selectedChat && selectedChat.id;
             const response = await apiClient.get(`/messages/${chatId}`, config);
             setMessages(response.data.data.messages);
-            socket.emit('join chat', selectedChat.id);
         } catch (err) {
             setMessages([]);
             console.log(err);
         }
     }
 
-
-
     async function handleSendMessage() {
         const sender = loggedInUser;
         const payload = { content: newMessage, chatId: selectedChat?.id, sender: user?.id };
 
-        // Create optimistic message
+        // Create dummy message
         const latestMessage: Message = {
             chat: selectedChat || undefined,
             chatId: selectedChat?.id,
@@ -69,10 +87,11 @@ const ChatBox = () => {
         setMessages([...messages, latestMessage]);
         setNewMessage('');
         try {
-            const response = await apiClient.post('/messages', payload, config);
+            const { data } = await apiClient.post('/messages', payload, config);
+            socket.emit('new message', data.data);
             setMessages(prevMessages =>
                 prevMessages.map(msg =>
-                    msg.id === latestMessage.id ? { ...msg, id: response.data.data.id } : msg
+                    msg.id === latestMessage.id ? { ...msg, id: data.data.id } : msg
                 )
             );
         } catch (err) {
@@ -82,8 +101,6 @@ const ChatBox = () => {
             );
         }
     }
-
-
 
     return (
         <div className="h-full flex flex-col">

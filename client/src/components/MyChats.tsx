@@ -25,7 +25,7 @@ const MyChats = () => {
         <main className="h-full">
             <div className={`w-full ${selectedChat ? 'hidden md:flex' : 'flex'} flex-col bg-gray-500 h-full md:w-full content-center rounded-md`}>
                 <div className="flex justify-between items-center p-1">
-                    <span>My Chats</span>
+                    <span className="text-4xl" >My Chats</span>
                     <Button onClick={() => setDialogOpen(true)} className="flex justify-between space-x-2 items-center px-2">
                         <span>New Group Chat</span>
                         <i className="fa-solid fa-plus text-xl"></i>
