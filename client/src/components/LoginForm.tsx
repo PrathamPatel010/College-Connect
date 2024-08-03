@@ -19,6 +19,7 @@ import { toast } from "./ui/use-toast";
 import axios from "axios";
 import { Toaster } from "./ui/toaster";
 import { cn } from "../lib/utils";
+import Header from "./ui/Header";
 
 const LoginForm = () => {
     const navigate = useNavigate();
@@ -69,7 +70,8 @@ const LoginForm = () => {
 
     return (
         <>
-            <Heading text="Login" />
+            <Header />
+            <Heading className={`flex justify-center items-center text-4xl mt-5`} text="Login" />
             <Form {...form}>
                 <form className="pt-5 flex flex-col items-center space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
                     <FormField

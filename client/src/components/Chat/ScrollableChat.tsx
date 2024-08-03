@@ -8,7 +8,7 @@ const ScrollableChat = ({ messages }: Props) => {
 
     return (
         <ScrollableFeed className='bg-gray-400 overflow-y-auto'>
-            {messages.map(message => <MessageBox message={message} />)}
+            {messages.map(message => <MessageBox key={message?.id} message={message} />)}
         </ScrollableFeed>
     )
 }

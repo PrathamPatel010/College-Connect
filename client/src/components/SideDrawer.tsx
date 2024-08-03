@@ -105,7 +105,7 @@ const SideDrawer = () => {
                     </Tooltip>
                 </TooltipProvider>
                 <div>
-                    <Heading mt={3} size={4} text="College Connect" />
+                    <Heading className={`flex justify-center items-center text-3xl mt-3`} text="College Connect" />
                 </div>
                 <div className="flex space-x-10">
                     <i className="text-3xl fa-solid fa-bell cursor-pointer"></i>

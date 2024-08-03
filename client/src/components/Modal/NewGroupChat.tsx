@@ -109,7 +109,7 @@ function ModalNewGroupChat({ dialogOpen, setDialogOpen }: Props) {
             if (user.id === loggedInUser.id) {
                 toast({
                     className: cn(
-                        'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'
+                        'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4 z-50'
                     ),
                     title: "Cannot remove yourself as you are admin",
                     status: "error",
@@ -169,9 +169,12 @@ function ModalNewGroupChat({ dialogOpen, setDialogOpen }: Props) {
                                 className="col-span-3"
                             />
                         </div>
+                        <div className="'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'">
+                            <Toaster />
+                        </div >
                     </div>
                     <div className="flex flex-wrap space-x-1 space-y-1">
-                        {selectedUsers.map(u => <UserBadgeInGroupChat onClick={(user) => removeFromUsersToAdd(user)} key={u.id} user={u} />)}
+                        {selectedUsers?.map(u => <UserBadgeInGroupChat onClick={(user) => removeFromUsersToAdd(user)} key={u?.id} user={u!} />)}
                     </div>
                     <div className="flex flex-col space-y-1">
                         {users.map(user => <UserListItem key={user.id} onClick={() => handleClickOnUserList(user)} user={user} />)}
@@ -181,9 +184,7 @@ function ModalNewGroupChat({ dialogOpen, setDialogOpen }: Props) {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-            <div className="'top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4'">
-                <Toaster />
-            </div >
+
 
         </>
     )

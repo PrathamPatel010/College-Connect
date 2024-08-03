@@ -67,7 +67,6 @@ const ChatBox = () => {
             setMessages(response.data.data.messages);
         } catch (err) {
             setMessages([]);
-            console.log(err);
         }
     }
 
@@ -112,7 +111,9 @@ const ChatBox = () => {
             {selectedChat && (
                 <ChatHeader selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
             )}
-            {selectedChat && (<ScrollableChat messages={messages} />)}
+            {selectedChat && (
+                <ScrollableChat messages={messages} />)
+            }
             {selectedChat && (
                 <div className="bg-gray-500 sticky bottom-0 flex w-full items-center space-x-2">
                     <Input onChange={
